@@ -22,7 +22,11 @@
         "http://github.com/*"
       ],
       "js": [
+        "src/lib/jquery.min.js",
         "src/inject/inject.js"
+      ],
+      "css": [
+        "src/inject/inject.css"
       ]
     }
   ]

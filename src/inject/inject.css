@@ -1,0 +1,14 @@
+.codenav_word_split span {
+  cursor: pointer;
+}
+.codenav_selected {
+  background-color: #ffa;
+}
+
+.codenav_selected_sticky {
+  background-color: #88ffb8;
+}
+
+.codenav_word_split_off {
+
+}
