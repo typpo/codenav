@@ -7,6 +7,7 @@ chrome.extension.sendMessage({}, function(response) {
   }, 10);
 });
 
+var $ = window.jQuery;
 var cfg = {};
 
 function run() {
@@ -14,16 +15,17 @@ function run() {
 
   setup_config();
   setup_code_highlighting();
+  setup_scroll_wrapper();
   setup_search();
 }
 
 function setup_config() {
   // eg. /typpo/asterank
   cfg.repo_home_link = $('.js-repo-home-link').attr('href');
+  cfg.original_scroll_pos = $(window).scrollTop();
 }
 
 function setup_code_highlighting() {
-  var $ = window.jQuery;
   var token_index = {};
 
   $('.code-body').addClass('codenav_word_split');
@@ -58,6 +60,19 @@ function setup_code_highlighting() {
   }, function() {
     $('.code-body .codenav_highlight').removeClass('codenav_highlight');
   });
+}
+
+function setup_scroll_wrapper() {
+  $('.blob-wrapper').addClass('codenav_blob_wrapper').height(
+      $(window).height() - $('.blob-wrapper').offset().top)
+
+  $('body').addClass('codenav_hide_scroll');
+
+  // Handle when github scrolls for the user initially, eg.
+  // https://github.com/typpo/asterank/blob/ab4655402ca61fccc339caab1a6c0ba7d14abf66/static/js/main/controllers/asteroid_table.js#L90
+  // TODO fix this when user uses f5 to refresh
+  $('.blob-wrapper').scrollTop(cfg.original_scroll_pos);
+  $(window).scrollTop(0);
 }
 
 function setup_search() {

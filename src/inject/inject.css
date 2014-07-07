@@ -1,3 +1,7 @@
+.codenav_hide_scroll {
+  overflow: hidden;
+}
+
 .codenav_word_split span {
   cursor: pointer;
 }
@@ -21,7 +25,7 @@
   width:100%;
   position: fixed;
   bottom:0;
-  height: 350px;
+  height: 300px;
 
   overflow-y: scroll;
 }
@@ -29,4 +33,8 @@
 .codenav_search_results_highlight {
   background-color: #88ffb8;
   cursor: pointer;
+}
+
+.codenav_blob_wrapper {
+  overflow-y: scroll !important;
 }
