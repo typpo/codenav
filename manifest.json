@@ -1,9 +1,9 @@
 {
-  "name": "CHANGE THIS : Extension boilerplate",
+  "name": "Codenav (Github code navigation)",
   "version": "0.0.1",
   "manifest_version": 2,
-  "description": "This extension was created with the awesome extensionizr.com",
-  "homepage_url": "http://extensionizr.com",
+  "description": "Navigate Github code more easily.",
+  "homepage_url": "http://ianww.com",
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
@@ -12,12 +12,14 @@
   "default_locale": "en",
   "options_page": "src/options_custom/index.html",
   "permissions": [
-    "https://github.com/*,http://github.com/*"
+    "https://github.com/*",
+    "http://github.com/*"
   ],
   "content_scripts": [
     {
       "matches": [
-        "https://www.google.com/*"
+        "https://github.com/*",
+        "http://github.com/*"
       ],
       "js": [
         "src/inject/inject.js"
