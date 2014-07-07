@@ -1,14 +1,31 @@
 .codenav_word_split span {
   cursor: pointer;
 }
-.codenav_selected {
+.codenav_highlight {
   background-color: #ffa;
 }
 
-.codenav_selected_sticky {
+.codenav_highlight_sticky {
   background-color: #88ffb8;
 }
 
 .codenav_word_split_off {
+
+}
+
+.codenav_search_results {
+  border-top: 2px solid #000;
+  padding: 20px;
+  background-color: #fff;
+
+  width:100%;
+  position: fixed;
+  bottom:0;
+  height: 300px;
+
+  overflow-y: scroll;
+}
+
+.codenav_search_results_highlight {
 
 }
