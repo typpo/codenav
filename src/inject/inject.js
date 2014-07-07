@@ -71,17 +71,35 @@ function setup_search() {
       var $data = $(data);
       var $results = $data.find('#code_search_results');
 
-      $results.find('.code-list-item').on('hover', function() {
-
-      }, function() {
-
-      });
-
-      $results.find('.code-list-item').on('click', function() {
-
-      });
-
       $div.empty().append($results);
+
+      $div.find('.code-list-item .line').hover(function() {
+        $(this).addClass('codenav_search_results_highlight');
+      }, function() {
+        $('.codenav_search_results_highlight').removeClass('codenav_search_results_highlight');
+      });
+
+      $div.find('.code-list-item .line').on('click', function() {
+        // This element is the Nth .line
+        var lines = $(this).closest('.diff-line-code').find('.line');
+        var my_line_index = 0;
+        for (; my_line_index < lines.length; my_line_index++) {
+          if (lines[my_line_index] == this) {
+            break;
+          }
+        }
+
+        // Guess line num - github doesn't really know
+        var $firstline = $($(this).closest('.blob-line-code').find('.blob-line-nums a')[0]);
+        var href = $firstline.attr('href');
+        var num = parseInt($firstline.text());
+
+        // True line number is offset by 2 inexplicably
+        var lineno = num + my_line_index + 2;
+        var linehref = href.slice(0, href.indexOf('#'));
+
+        window.location.href = 'https://github.com' + linehref + '#L' + lineno;
+      });
     });
   });
 }

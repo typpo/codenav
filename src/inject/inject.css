@@ -21,11 +21,12 @@
   width:100%;
   position: fixed;
   bottom:0;
-  height: 300px;
+  height: 350px;
 
   overflow-y: scroll;
 }
 
 .codenav_search_results_highlight {
-
+  background-color: #88ffb8;
+  cursor: pointer;
 }
