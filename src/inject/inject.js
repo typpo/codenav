@@ -24,6 +24,7 @@ function run() {
   if (!is_code_page()) {
     return;
   }
+  // TODO remove some of this stuff, memory leaks?
   setup_config();
   setup_code_highlighting();
   setup_scroll_wrapper();
@@ -155,7 +156,8 @@ function setup_scroll_bar() {
         .appendTo($scrollindicator)
         .css({'top': height})
         .on('click', function() {
-          $('.blob-wrapper').scrollTop($('.blob-wrapper').height()*pct);
+          $bwrapper.scrollTop($bwrapper.height()*pct);  // note this doesn't handle resize
+          $('.codenav_search_results_highlight').removeClass('codenav_search_results_highlight');
           var c = 0;
           var t = setInterval(function() {
             // Special highlight for the word that was jumped to. Blink a few
