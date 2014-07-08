@@ -22,6 +22,7 @@ chrome.extension.sendMessage({}, function(response) {
 
 function run() {
   if (!is_code_page()) {
+    $('body').removeClass('codenav_hide_scroll');
     return;
   }
   setup_config();
