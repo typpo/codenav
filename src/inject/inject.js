@@ -73,6 +73,10 @@ function setup_code_highlighting() {
     }
     $('.code-body .codenav_highlight_sticky').removeClass('codenav_highlight_sticky');
     var tokens = token_index[$this.html()];
+    if (!tokens) {
+      // This token wasn't indexed.
+      return;
+    }
     for (var i=0; i < tokens.length; i++) {
       tokens[i].addClass('codenav_highlight_sticky');
     }
@@ -190,7 +194,9 @@ function setup_search() {
       $prevdiv.remove();
     }
     $prevdiv = $div;
-    var $search_content = $div.find('.codenav_search_content');
+
+    setup_search_dragbar();
+    var $search_content = $div.find('#codenav_search_content');
 
     $.get(url, function(data) {
       var $data = $(data);
@@ -202,6 +208,9 @@ function setup_search() {
       $results.find('.search-foot-note').remove();
 
       $search_content.empty().append($results);
+
+      $summ = $('#codenav_search_summary');
+      $summ.html('<h3>Showing ' + $search_content.find('.code-list-item').length + ' results</h3><hr/>');
 
       $search_content.find('.code-list-item .line').hover(function() {
         $(this).addClass('codenav_search_results_highlight');
@@ -243,16 +252,50 @@ function setup_search() {
       });
     });
 
-    $div.find('.codenav_search_x').on('click', function() {
+    $div.find('#codenav_search_x').on('click', function() {
       $div.remove();
     });
   });
 }
 
+// TODO remember this preferred height between sessions
+var preferred_search_box_height = 300;
+function setup_search_dragbar() {
+  var $csd = $('#codenav_search_drag');
+  var $csr = $('#codenav_search_results');
+  var dragging = false;
+
+  // Set default height
+  $csr.height(preferred_search_box_height);
+  $csd.css('bottom', preferred_search_box_height);
+
+  // Height listeners
+  $csd.mousedown(function(e) {
+    e.preventDefault();
+    dragging = true;
+
+    $(document).mousemove(function(e) {
+      $csd.css('top', e.pageY);
+    });
+  });
+
+  $csd.mouseup(function() {
+    if (dragging) {
+      var newheight = $(window).height() - parseInt($csd.css('top'));
+      preferred_search_box_height = newheight;
+      $csr.css('height', newheight);
+      $(document).unbind('mousemove');
+      dragging = false;
+    }
+  });
+}
+
 var SEARCH_DIV =
-'<div class="codenav_search_results">' +
-    '<div class="codenav_search_x">X</div>' +
-    '<div class="codenav_search_content">' +
+'<div id="codenav_search_drag"></div>' +
+'<div id="codenav_search_results">' +
+    '<div id="codenav_search_x">&times;</div>' +
+    '<div id="codenav_search_summary"></div>' +
+    '<div id="codenav_search_content">' +
       '<h1>Searching...</h1>' +
     '</div>' +
 '</div>'
