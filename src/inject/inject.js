@@ -50,8 +50,8 @@ function setup_code_highlighting() {
   $('.code-body span').each(function() {
     var $this = $(this);
     var tok = $this.html();
-    if (/.*[,\(\)\.\\\/\[\]\{\}\'\"\:\;\+]/.test(tok)) {
-      // omit symbols
+    if (/^[ ,\(\)\.\\\/\[\]\{\}\'\"\:\;\+]+$/.test(tok)) {
+      // omit strings of symbols
       return;
     }
     if (!token_index[tok]) {
@@ -78,27 +78,36 @@ function setup_code_highlighting() {
   });
 
   // Hover behavior
-  // TODO debounce
+  // User must hover for 100 ms to trigger 'hover' event.
+  var hover_timer = null;
   $('.code-body span').hover(function() {
     var $this = $(this);
-    if ($this.hasClass('codenav_ignore')) {
-      return;
-    }
+    hover_timer = setTimeout(function() {
+      if ($this.hasClass('codenav_ignore')) {
+        return;
+      }
 
-    // Unhighlighting existing
-    $('.code-body .codenav_highlight').removeClass('codenav_highlight');
+      // Unhighlighting existing
+      $('.code-body .codenav_highlight').removeClass('codenav_highlight');
 
-    // Then highlight
-    var tokens = token_index[$this.html()];
-    fns.codenav_clear_marks();
-    for (var i=0; i < tokens.length; i++) {
-      var tok = tokens[i];
-      tok.addClass('codenav_highlight');
-      var lineno = parseInt(tok.closest('.line').attr('id').slice(2));
-      fns.codenav_mark_line(lineno);
-    }
+      // Then highlight
+      var tokens = token_index[$this.html()];
+      if (!tokens) {
+        // We didn't index this token
+        return;
+      }
+      fns.codenav_clear_marks();
+      for (var i=0; i < tokens.length; i++) {
+        var tok = tokens[i];
+        tok.addClass('codenav_highlight');
+        var lineno = parseInt(tok.closest('.line').attr('id').slice(2));
+        fns.codenav_mark_line(lineno);
+      }
+    }, 100);
   }, function() {
-    // Don't unhighlight til a new thing is highlighted.
+    if (hover_timer) {
+      clearTimeout(hover_timer);
+    }
   });
 }
 
