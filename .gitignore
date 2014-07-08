@@ -2,6 +2,9 @@ chrome/src/inject/inject*
 chrome/src/lib/jquery*
 firefox/data/inject*
 firefox/data/jquery*
+*.xpi
+*.zip
+*debuglog.txt
 
 ### vim ###
 [._]*.s[a-w][a-z]
