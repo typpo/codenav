@@ -1,22 +1,36 @@
+var $ = window.jQuery;
+var cfg = {};
+
 chrome.extension.sendMessage({}, function(response) {
   var readyStateCheckInterval = setInterval(function() {
     if (document.readyState === "complete") {
       clearInterval(readyStateCheckInterval);
       run();
+
+      // Convoluted detection for pushstate
+      var lastloc = window.location.href;
+      setInterval(function() {
+        if (lastloc != window.location.href) {
+          setTimeout(run, 300);
+          lastloc = window.location.href;
+        }
+      }, 100);
     }
   }, 10);
 });
 
-var $ = window.jQuery;
-var cfg = {};
-
 function run() {
-  console.log('Running modifications');
-
+  if (!is_code_page()) {
+    return;
+  }
   setup_config();
   setup_code_highlighting();
   setup_scroll_wrapper();
   setup_search();
+}
+
+function is_code_page() {
+  return $('#LC1').length > 0;
 }
 
 function setup_config() {
