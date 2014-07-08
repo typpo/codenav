@@ -2,8 +2,8 @@
   "name": "CodeNav (Github code navigation)",
   "version": "0.0.1",
   "manifest_version": 2,
-  "description": "Navigate Github code more easily.",
-  "homepage_url": "http://ianww.com",
+  "description": "Navigate Github code easily.",
+  "homepage_url": "http://ianww.com/codenav",
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
