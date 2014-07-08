@@ -180,6 +180,10 @@ function setup_search() {
     $.get(url, function(data) {
       var $data = $(data);
       var $results = $data.find('#code_search_results');
+      if ($results.length === 0) {
+        $search_content.empty().append('<h1>Nothing found</h1>');
+        return;
+      }
       $results.find('.search-foot-note').remove();
 
       $search_content.empty().append($results);
@@ -209,7 +213,7 @@ function setup_search() {
         var linehref = href.slice(0, href.indexOf('#'));
 
         // True line number is offset by 2 inexplicably
-        var offset = 2;
+        var offset = 0;  // TODO 0 for now. It's inconsistent :(
         if (window.location.href.indexOf(linehref) > -1) {
           // unless it's just jumping around in the same file...
           offset = 0;
@@ -234,6 +238,6 @@ var SEARCH_DIV =
 '<div class="codenav_search_results">' +
     '<div class="codenav_search_x">X</div>' +
     '<div class="codenav_search_content">' +
-      '<h1 style="text-align:center">Searching...</h1>' +
+      '<h1>Searching...</h1>' +
     '</div>' +
 '</div>'

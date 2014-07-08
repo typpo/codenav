@@ -73,3 +73,7 @@
 
   cursor: pointer;
 }
+
+.codenav_search_results h1 {
+   text-align:center;
+}
