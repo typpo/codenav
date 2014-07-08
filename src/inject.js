@@ -227,7 +227,7 @@ function setup_search() {
 
       $search_content.find('.code-list-item .line').on('click', function() {
         // This element is the Nth .line
-        var lines = $(this).closest('.diff-line-code').find('.line');
+        var lines = $(this).closest('.blob-line-code').find('.line');
         var my_line_index = 0;
         for (; my_line_index < lines.length; my_line_index++) {
           if (lines[my_line_index] == this) {
