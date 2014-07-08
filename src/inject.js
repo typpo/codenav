@@ -132,6 +132,7 @@ function setup_scroll_bar() {
   // Manual width is to fix firefox problem.
   var $td = $('<td style="width:1%"></td>').appendTo($('tr.file-code-line'));
   var $scrollindicator = $('<div class="codenav_scroll_indicator"></div>').appendTo($td);
+  var $fcode = $('.file-code');
 
   var total_num_lines = $('.line').length; // total lines in file
 
@@ -154,7 +155,9 @@ function setup_scroll_bar() {
     }
     var $mark = $('<span class="codenav_scroll_indicator_mark"></span>')
         .appendTo($scrollindicator)
-        .css({'top': height})
+        .css('top', height)
+        // Fix positioning if code is horizontally scrollable
+        .css('margin-left', -1*Math.max(0, $fcode.width() - 920 + 15))
         .on('click', function() {
           $bwrapper.scrollTop($bwrapper.height()*pct);  // note this doesn't handle resize
           // remove green sticky things; the user has clicked on something new.
