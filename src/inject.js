@@ -163,17 +163,6 @@ function setup_scroll_bar() {
           // remove green sticky things; the user has clicked on something new.
           $('.codenav_highlight_sticky').removeClass('codenav_highlight_sticky');
           $elt.addClass('codenav_highlight_sticky');
-          /*
-          var c = 0;
-          var t = setInterval(function() {
-            // Special highlight for the word that was jumped to. Blink a few
-            // times.
-            $elt.toggleClass('codenav_search_results_highlight');
-            if (++c > 3) {
-              clearInterval(t);
-            }
-          }, 350);
-         */
         });
   }
 
