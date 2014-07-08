@@ -13,8 +13,8 @@
   background-color: #88ffb8;
 }
 
-.codenav_word_split_off {
-
+.codenav_no_highlight {
+  cursor: text !important;
 }
 
 .codenav_search_results {

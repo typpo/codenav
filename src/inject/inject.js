@@ -54,12 +54,16 @@ function setup_code_highlighting() {
   });
 
   // omit comments and such
-  $('.code-body .c').addClass('codenav_word_split_off');
+  $('.code-body .c').addClass('codenav_no_highlight');
 
   // Click behavior
   $('.code-body span').on('click', function() {
+    var $this = $(this);
+    if ($this.hasClass('codenav_no_highlight')) {
+      return;
+    }
     $('.code-body .codenav_highlight_sticky').removeClass('codenav_highlight_sticky');
-    var tokens = token_index[$(this).html()];
+    var tokens = token_index[$this.html()];
     for (var i=0; i < tokens.length; i++) {
       tokens[i].addClass('codenav_highlight_sticky');
     }
@@ -67,7 +71,11 @@ function setup_code_highlighting() {
 
   // Hover behavior
   $('.code-body span').hover(function() {
-    var tokens = token_index[$(this).html()];
+    var $this = $(this);
+    if ($this.hasClass('codenav_no_highlight')) {
+      return;
+    }
+    var tokens = token_index[$this.html()];
     for (var i=0; i < tokens.length; i++) {
       tokens[i].addClass('codenav_highlight');
     }
