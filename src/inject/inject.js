@@ -8,7 +8,7 @@ chrome.extension.sendMessage({}, function(response) {
       clearInterval(readyStateCheckInterval);
       run();
 
-      // Convoluted detection for pushstate
+      // Silly detection for pushstate
       var lastloc = window.location.href;
       setInterval(function() {
         if (lastloc != window.location.href) {
@@ -24,7 +24,6 @@ function run() {
   if (!is_code_page()) {
     return;
   }
-  // TODO remove some of this stuff, memory leaks?
   setup_config();
   setup_code_highlighting();
   setup_scroll_wrapper();
@@ -83,7 +82,7 @@ function setup_code_highlighting() {
   });
 
   // Hover behavior
-  // User must hover for 100 ms to trigger 'hover' event.
+  // User must hover for 150 ms to trigger 'hover' event.
   var hover_timer = null;
   $('.code-body span').hover(function() {
     var $this = $(this);
@@ -108,7 +107,7 @@ function setup_code_highlighting() {
         var lineno = parseInt(tok.closest('.line').attr('id').slice(2));
         fns.codenav_mark_line(lineno, tok);
       }
-    }, 100);
+    }, 150);
   }, function() {
     if (hover_timer) {
       clearTimeout(hover_timer);
