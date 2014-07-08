@@ -118,12 +118,11 @@ function setup_search() {
     $.get(url, function(data) {
       var $data = $(data);
       var $results = $data.find('#code_search_results');
+      $results.find('.search-foot-note').remove();
 
       $search_content.empty().append($results);
 
-      console.log($search_content.find('.code-list-item .line'));
       $search_content.find('.code-list-item .line').hover(function() {
-        console.log('whyy');
         $(this).addClass('codenav_search_results_highlight');
       }, function() {
         $('.codenav_search_results_highlight').removeClass('codenav_search_results_highlight');
@@ -140,13 +139,20 @@ function setup_search() {
         }
 
         // Guess line num - github doesn't really know here
+        // Check out this example where Github just labels stuff wrong
+        // https://github.com/typpo/asterank/blob/ab4655402ca61fccc339caab1a6c0ba7d14abf66/static/js/main/controllers/custom_input.js#L33
         var $firstline = $($(this).closest('.blob-line-code').find('.blob-line-nums a')[0]);
         var href = $firstline.attr('href');
         var num = parseInt($firstline.text());
+        var linehref = href.slice(0, href.indexOf('#'));
 
         // True line number is offset by 2 inexplicably
-        var lineno = num + my_line_index + 2;
-        var linehref = href.slice(0, href.indexOf('#'));
+        var offset = 2;
+        if (window.location.href.indexOf(linehref) > -1) {
+          // unless it's just jumping around in the same file...
+          offset = 0;
+        }
+        var lineno = num + my_line_index + offset;
 
         window.location.href = 'https://github.com' + linehref + '#L' + lineno;
       });
