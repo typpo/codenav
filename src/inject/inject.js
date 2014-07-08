@@ -129,15 +129,28 @@ function setup_scroll_bar() {
   var $td = $('<td></td>').appendTo($('tr.file-code-line'));
   var $scrollindicator = $('<div class="codenav_scroll_indicator"></div>').appendTo($td);
 
-  var total_num_lines = $('.line').length;
+  var total_num_lines = $('.line').length; // total lines in file
 
+  // Define marking functions.
   fns.codenav_mark_line = function(n, elt) {
     // Reset height to handle resize
-    $scrollindicator.height($('.blob-wrapper').height());
+    var $bwrapper = $('.blob-wrapper');
+    $scrollindicator.height($bwrapper.height());
+    $('.code-body').css('min-height', $bwrapper.height());
 
     // Compute marker position
-    var pct = n/total_num_lines;
-    var height = $scrollindicator.height() * pct + 30;
+    var font_size = $('.code-body').css('font-size');
+    var line_height = Math.floor(parseInt(font_size.replace('px','')) * 1.5);
+    var height;
+    if (total_num_lines * line_height > $scrollindicator.height()) {
+      // Visualize placement across the entire document.
+      var pct = n/total_num_lines;
+      height = $scrollindicator.height() * pct + 40;
+    } else {
+      // More accurate placement.
+      height = line_height * n;
+    }
+    //var height = lineHeight * n;
     var $mark = $('<span class="codenav_scroll_indicator_mark"></span>')
         .appendTo($scrollindicator)
         .css({'top': height})
@@ -151,7 +164,7 @@ function setup_scroll_bar() {
             if (++c > 3) {
               clearInterval(t);
             }
-          }, 500);
+          }, 350);
         });
   }
 

@@ -42,9 +42,11 @@
   padding-left: 5px;
   padding-right: 5px;
 
-  position: fixed;
-  top: 0;
-  right: 0;
+  margin-top: -13px;
+  margin-left: 9px
+
+  position: relative;
+  float: right;
 
   cursor: pointer;
 }
@@ -70,6 +72,8 @@
   border: 1px solid #909090;
   width: 1%;
   height: 11px;
+
+  float: right;
 
   cursor: pointer;
 }
