@@ -114,6 +114,14 @@ function setup_code_highlighting() {
   });
 }
 
+function scroll_to_lineno(n) {
+  var $bwrapper = $('.blob-wrapper');
+  var $lineelt = $('#LC' + n);
+  var $lineparent = $lineelt.parent();
+  var linepos = $lineelt.offset().top - $lineparent.offset().top - $lineparent.scrollTop();
+  $bwrapper.scrollTop(linepos - 100);
+}
+
 function setup_scroll_wrapper() {
   var $bwrapper = $('.blob-wrapper');
   $bwrapper.addClass('codenav_blob_wrapper').height(
@@ -160,10 +168,7 @@ function setup_scroll_bar() {
         .css('margin-left', -1*Math.max(0, $fcode.width() - 920 + 15))
         .on('click', function() {
           // Note this doesn't handle resize between setup and click.
-          var $lineelt = $('#LC' + n);
-          var $lineparent = $lineelt.parent();
-          var linepos = $lineelt.offset().top - $lineparent.offset().top - $lineparent.scrollTop();
-          $bwrapper.scrollTop(linepos - 100);
+          scroll_to_lineno(n);
           // remove green sticky things; the user has clicked on something new.
           $('.codenav_highlight_sticky').removeClass('codenav_highlight_sticky');
           $elt.addClass('codenav_highlight_sticky');
@@ -207,7 +212,12 @@ function setup_search() {
       $search_content.empty().append($results);
 
       $summ = $('#codenav_search_summary');
-      $summ.html('<h3>Showing ' + $search_content.find('.code-list-item').length + ' results</h3><hr/>');
+      var numresults = $search_content.find('.code-list-item').length;
+      if (numresults >= 10) {
+        // TODO handle github pagination.
+        numresults = '10+';
+      }
+      $summ.html('<h3>Showing ' + numresults + ' results</h3><hr/>');
 
       $search_content.find('.code-list-item .line').hover(function() {
         $(this).addClass('codenav_search_results_highlight');
@@ -234,12 +244,13 @@ function setup_search() {
         var linehref = href.slice(0, href.indexOf('#'));
 
         // TODO 0 for now. It's inconsistent :(
-        // True line number is inexplicably offset by 2 sometimes?
+        // FIXME True line number is inexplicably offset by 1 or 2 sometimes?
         var offset = 0;
         var lineno = num + my_line_index + offset;
         if (window.location.href.indexOf(linehref) > -1) {
-          // Same page. To fix a firefox problem, just scroll to it directly.
-          $('.blob-wrapper').scrollTop(cfg.line_height * lineno);
+          // Same page. Just scroll to it directly.
+          //$('.blob-wrapper').scrollTop(cfg.line_height * lineno);
+          scroll_to_lineno(lineno);
         } else {
           window.location.href = 'https://github.com' + linehref + '#L' + lineno;
         }
