@@ -1,5 +1,5 @@
 {
-  "name": "Codenav (Github code navigation)",
+  "name": "CodeNav (Github code navigation)",
   "version": "0.0.1",
   "manifest_version": 2,
   "description": "Navigate Github code more easily.",
@@ -10,7 +10,6 @@
     "128": "icons/icon128.png"
   },
   "default_locale": "en",
-  "options_page": "src/options_custom/index.html",
   "permissions": [
     "https://github.com/*",
     "http://github.com/*"
