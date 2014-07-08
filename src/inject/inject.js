@@ -137,7 +137,7 @@ function setup_scroll_bar() {
   var total_num_lines = $('.line').length; // total lines in file
 
   // Define marking functions.
-  fns.codenav_mark_line = function(n, elt) {
+  fns.codenav_mark_line = function(n, $elt) {
     // Reset height to handle resize
     var $bwrapper = $('.blob-wrapper');
     $scrollindicator.height($bwrapper.height());
@@ -155,22 +155,25 @@ function setup_scroll_bar() {
       // More accurate placement.
       height = line_height * n;
     }
-    //var height = lineHeight * n;
     var $mark = $('<span class="codenav_scroll_indicator_mark"></span>')
         .appendTo($scrollindicator)
         .css({'top': height})
         .on('click', function() {
           $bwrapper.scrollTop($bwrapper.height()*pct);  // note this doesn't handle resize
-          $('.codenav_search_results_highlight').removeClass('codenav_search_results_highlight');
+          // remove green sticky things; the user has clicked on something new.
+          $('.codenav_highlight_sticky').removeClass('codenav_highlight_sticky');
+          $elt.addClass('codenav_highlight_sticky');
+          /*
           var c = 0;
           var t = setInterval(function() {
             // Special highlight for the word that was jumped to. Blink a few
             // times.
-            elt.toggleClass('codenav_search_results_highlight');
+            $elt.toggleClass('codenav_search_results_highlight');
             if (++c > 3) {
               clearInterval(t);
             }
           }, 350);
+         */
         });
   }
 
