@@ -13,7 +13,7 @@
   background-color: #88ffb8;
 }
 
-.codenav_no_highlight {
+.codenav_ignore {
   cursor: text !important;
 }
 
@@ -32,6 +32,20 @@
 
 .codenav_search_results_highlight {
   background-color: #88ffb8;
+  cursor: pointer;
+}
+
+.codenav_search_x {
+  font-size: 20px;
+  font-weight: bold;
+  background-color: #ccc;
+  padding-left: 5px;
+  padding-right: 5px;
+
+  position: absolute;
+  top: 0;
+  right: 0;
+
   cursor: pointer;
 }
 

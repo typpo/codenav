@@ -54,12 +54,12 @@ function setup_code_highlighting() {
   });
 
   // omit comments and such
-  $('.code-body .c').addClass('codenav_no_highlight');
+  $('.code-body .c').addClass('codenav_ignore');
 
   // Click behavior
   $('.code-body span').on('click', function() {
     var $this = $(this);
-    if ($this.hasClass('codenav_no_highlight')) {
+    if ($this.hasClass('codenav_ignore')) {
       return;
     }
     $('.code-body .codenav_highlight_sticky').removeClass('codenav_highlight_sticky');
@@ -72,7 +72,7 @@ function setup_code_highlighting() {
   // Hover behavior
   $('.code-body span').hover(function() {
     var $this = $(this);
-    if ($this.hasClass('codenav_no_highlight')) {
+    if ($this.hasClass('codenav_ignore')) {
       return;
     }
     var tokens = token_index[$this.html()];
@@ -98,26 +98,38 @@ function setup_scroll_wrapper() {
   $(window).scrollTop(0);
 }
 
+var $prevdiv = null;
 function setup_search() {
   $('.code-body span').on('click', function() {
-    var query = $(this).text();
+    var $this = $(this);
+    if ($this.hasClass('codenav_ignore')) {
+      return;
+    }
+    var query = $this.text();
     var url = 'https://github.com' + cfg.repo_home_link + '/search?q=' + query;
 
-    var $div = $('<div class="codenav_search_results"><h1>Loading...</h1></div>').appendTo('body');
+    var $div = $(SEARCH_DIV).appendTo('body');
+    if ($prevdiv) {
+      $prevdiv.remove();
+    }
+    $prevdiv = $div;
+    var $search_content = $div.find('.codenav_search_content');
 
     $.get(url, function(data) {
       var $data = $(data);
       var $results = $data.find('#code_search_results');
 
-      $div.empty().append($results);
+      $search_content.empty().append($results);
 
-      $div.find('.code-list-item .line').hover(function() {
+      console.log($search_content.find('.code-list-item .line'));
+      $search_content.find('.code-list-item .line').hover(function() {
+        console.log('whyy');
         $(this).addClass('codenav_search_results_highlight');
       }, function() {
         $('.codenav_search_results_highlight').removeClass('codenav_search_results_highlight');
       });
 
-      $div.find('.code-list-item .line').on('click', function() {
+      $search_content.find('.code-list-item .line').on('click', function() {
         // This element is the Nth .line
         var lines = $(this).closest('.diff-line-code').find('.line');
         var my_line_index = 0;
@@ -127,7 +139,7 @@ function setup_search() {
           }
         }
 
-        // Guess line num - github doesn't really know
+        // Guess line num - github doesn't really know here
         var $firstline = $($(this).closest('.blob-line-code').find('.blob-line-nums a')[0]);
         var href = $firstline.attr('href');
         var num = parseInt($firstline.text());
@@ -139,5 +151,17 @@ function setup_search() {
         window.location.href = 'https://github.com' + linehref + '#L' + lineno;
       });
     });
+
+    $div.find('.codenav_search_x').on('click', function() {
+      $div.remove();
+    });
   });
 }
+
+var SEARCH_DIV =
+'<div class="codenav_search_results">' +
+    '<div class="codenav_search_x">X</div>' +
+    '<div class="codenav_search_content">' +
+      '<h1 style="text-align:center">Searching...</h1>' +
+    '</div>' +
+'</div>'
