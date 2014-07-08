@@ -159,7 +159,7 @@ function setup_scroll_bar() {
         // Fix positioning if code is horizontally scrollable
         .css('margin-left', -1*Math.max(0, $fcode.width() - 920 + 15))
         .on('click', function() {
-          $bwrapper.scrollTop($bwrapper.height()*pct);  // note this doesn't handle resize
+          $bwrapper.scrollTop(cfg.line_height * n - 275);  // note this doesn't handle resize
           // remove green sticky things; the user has clicked on something new.
           $('.codenav_highlight_sticky').removeClass('codenav_highlight_sticky');
           $elt.addClass('codenav_highlight_sticky');
