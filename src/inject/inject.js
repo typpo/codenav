@@ -216,7 +216,11 @@ function setup_search() {
         }
         var lineno = num + my_line_index + offset;
 
+        // TODO if in the same file, ensure that it's scrolled into view
+        // properly.  Until then, close div if we're just jumping in the same
+        // file.
         window.location.href = 'https://github.com' + linehref + '#L' + lineno;
+        $div.remove();
       });
     });
 
