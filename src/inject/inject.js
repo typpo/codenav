@@ -101,7 +101,7 @@ function setup_code_highlighting() {
         var tok = tokens[i];
         tok.addClass('codenav_highlight');
         var lineno = parseInt(tok.closest('.line').attr('id').slice(2));
-        fns.codenav_mark_line(lineno);
+        fns.codenav_mark_line(lineno, tok);
       }
     }, 100);
   }, function() {
@@ -131,7 +131,7 @@ function setup_scroll_bar() {
 
   var total_num_lines = $('.line').length;
 
-  fns.codenav_mark_line = function(n) {
+  fns.codenav_mark_line = function(n, elt) {
     // Reset height to handle resize
     $scrollindicator.height($('.blob-wrapper').height());
 
@@ -143,7 +143,15 @@ function setup_scroll_bar() {
         .css({'top': height})
         .on('click', function() {
           $('.blob-wrapper').scrollTop($('.blob-wrapper').height()*pct);
-          // TODO special highlight for the word that was jumped to.
+          var c = 0;
+          var t = setInterval(function() {
+            // Special highlight for the word that was jumped to. Blink a few
+            // times.
+            elt.toggleClass('codenav_search_results_highlight');
+            if (++c > 3) {
+              clearInterval(t);
+            }
+          }, 500);
         });
   }
 
