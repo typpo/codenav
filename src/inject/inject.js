@@ -1,5 +1,6 @@
 var $ = window.jQuery;
 var cfg = {};
+var fns = {};
 
 chrome.extension.sendMessage({}, function(response) {
   var readyStateCheckInterval = setInterval(function() {
@@ -26,6 +27,7 @@ function run() {
   setup_config();
   setup_code_highlighting();
   setup_scroll_wrapper();
+  setup_scroll_bar();
   setup_search();
 }
 
@@ -43,9 +45,15 @@ function setup_code_highlighting() {
   var token_index = {};
 
   $('.code-body').addClass('codenav_word_split');
+
+  // Build the index on startup
   $('.code-body span').each(function() {
     var $this = $(this);
     var tok = $this.html();
+    if (/.*[,\(\)\.\\\/\[\]\{\}\'\"\:\;\+]/.test(tok)) {
+      // omit symbols
+      return;
+    }
     if (!token_index[tok]) {
       token_index[tok] = [];
     }
@@ -70,17 +78,27 @@ function setup_code_highlighting() {
   });
 
   // Hover behavior
+  // TODO debounce
   $('.code-body span').hover(function() {
     var $this = $(this);
     if ($this.hasClass('codenav_ignore')) {
       return;
     }
+
+    // Unhighlighting existing
+    $('.code-body .codenav_highlight').removeClass('codenav_highlight');
+
+    // Then highlight
     var tokens = token_index[$this.html()];
+    fns.codenav_clear_marks();
     for (var i=0; i < tokens.length; i++) {
-      tokens[i].addClass('codenav_highlight');
+      var tok = tokens[i];
+      tok.addClass('codenav_highlight');
+      var lineno = parseInt(tok.closest('.line').attr('id').slice(2));
+      fns.codenav_mark_line(lineno);
     }
   }, function() {
-    $('.code-body .codenav_highlight').removeClass('codenav_highlight');
+    // Don't unhighlight til a new thing is highlighted.
   });
 }
 
@@ -96,6 +114,33 @@ function setup_scroll_wrapper() {
   // TODO fix this when user uses f5 to refresh
   $bwrapper.scrollTop(cfg.original_scroll_pos - $bwrapper.offset().top);
   $(window).scrollTop(0);
+}
+
+function setup_scroll_bar() {
+  var $td = $('<td></td>').appendTo($('tr.file-code-line'));
+  var $scrollindicator = $('<div class="codenav_scroll_indicator"></div>').appendTo($td);
+
+  var total_num_lines = $('.line').length;
+
+  fns.codenav_mark_line = function(n) {
+    // Reset height to handle resize
+    $scrollindicator.height($('.blob-wrapper').height());
+
+    // Compute marker position
+    var pct = n/total_num_lines;
+    var height = $scrollindicator.height() * pct + 30;
+    var $mark = $('<span class="codenav_scroll_indicator_mark"></span>')
+        .appendTo($scrollindicator)
+        .css({'top': height})
+        .on('click', function() {
+          $('.blob-wrapper').scrollTop($('.blob-wrapper').height()*pct);
+          // TODO special highlight for the word that was jumped to.
+        });
+  }
+
+  fns.codenav_clear_marks = function() {
+    $('.codenav_scroll_indicator_mark').remove();
+  }
 }
 
 var $prevdiv = null;

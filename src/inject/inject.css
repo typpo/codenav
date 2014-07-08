@@ -52,3 +52,24 @@
 .codenav_blob_wrapper {
   overflow-y: scroll !important;
 }
+
+.codenav_scroll_indicator {
+  width: 1%;
+
+  vertical-align: top;
+  text-align: right;
+  /*border-left: 1px solid #e5e5e5;*/
+
+  line-height: 1;
+}
+
+.codenav_scroll_indicator_mark {
+  position: absolute;
+
+  background-color: #ffa;
+  border: 1px solid #909090;
+  width: 1%;
+  height: 11px;
+
+  cursor: pointer;
+}
