@@ -200,6 +200,7 @@ function setup_search() {
     setup_search_dragbar();
     var $search_content = $div.find('#codenav_search_content');
 
+    // Run github search and extract results into codenav div
     $.get(url, function(data) {
       var $data = $(data);
       var $results = $data.find('#code_search_results');
@@ -238,17 +239,10 @@ function setup_search() {
         var num = parseInt($firstline.text());
         var linehref = href.slice(0, href.indexOf('#'));
 
-        // True line number is offset by 2 inexplicably
-        var offset = 0;  // TODO 0 for now. It's inconsistent :(
-        if (window.location.href.indexOf(linehref) > -1) {
-          // unless it's just jumping around in the same file...
-          offset = 0;
-        }
+        // TODO 0 for now. It's inconsistent :(
+        // True line number is inexplicably offset by 2 sometimes?
+        var offset = 0;
         var lineno = num + my_line_index + offset;
-
-        // TODO if in the same file, ensure that it's scrolled into view
-        // properly.  Until then, close div if we're just jumping in the same
-        // file.
         window.location.href = 'https://github.com' + linehref + '#L' + lineno;
         $div.remove();
       });
