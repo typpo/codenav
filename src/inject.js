@@ -159,7 +159,11 @@ function setup_scroll_bar() {
         // Fix positioning if code is horizontally scrollable
         .css('margin-left', -1*Math.max(0, $fcode.width() - 920 + 15))
         .on('click', function() {
-          $bwrapper.scrollTop(cfg.line_height * n - 275);  // note this doesn't handle resize
+          // Note this doesn't handle resize between setup and click.
+          var $lineelt = $('#LC' + n);
+          var $lineparent = $lineelt.parent();
+          var linepos = $lineelt.offset().top - $lineparent.offset().top - $lineparent.scrollTop();
+          $bwrapper.scrollTop(linepos - 100);
           // remove green sticky things; the user has clicked on something new.
           $('.codenav_highlight_sticky').removeClass('codenav_highlight_sticky');
           $elt.addClass('codenav_highlight_sticky');
