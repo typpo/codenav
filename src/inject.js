@@ -2,9 +2,7 @@ var $ = window.jQuery;
 var cfg = {};
 var fns = {};
 
-console.log('aayyyyy');
 $(function() {
-  console.log('asdasdasd');
   run();
 
   // Silly detection for pushstate
@@ -37,6 +35,9 @@ function setup_config() {
   // eg. /typpo/asterank
   cfg.repo_home_link = $('.js-repo-home-link').attr('href');
   cfg.original_scroll_pos = $(window).scrollTop();
+
+  var font_size = $('.code-body').css('font-size');
+  cfg.line_height = Math.floor(parseInt(font_size.replace('px','')) * 1.5);
 }
 
 function setup_code_highlighting() {
@@ -128,7 +129,8 @@ function setup_scroll_wrapper() {
 }
 
 function setup_scroll_bar() {
-  var $td = $('<td></td>').appendTo($('tr.file-code-line'));
+  // Manual width is to fix firefox problem.
+  var $td = $('<td style="width:1%"></td>').appendTo($('tr.file-code-line'));
   var $scrollindicator = $('<div class="codenav_scroll_indicator"></div>').appendTo($td);
 
   var total_num_lines = $('.line').length; // total lines in file
@@ -141,16 +143,14 @@ function setup_scroll_bar() {
     $('.code-body').css('min-height', $bwrapper.height());
 
     // Compute marker position
-    var font_size = $('.code-body').css('font-size');
-    var line_height = Math.floor(parseInt(font_size.replace('px','')) * 1.5);
     var height;
-    if (total_num_lines * line_height > $scrollindicator.height()) {
+    if (total_num_lines * cfg.line_height > $scrollindicator.height()) {
       // Visualize placement across the entire document.
       var pct = n/total_num_lines;
       height = $scrollindicator.height() * pct + 40;
     } else {
       // More accurate placement.
-      height = line_height * n;
+      height = cfg.line_height * n;
     }
     var $mark = $('<span class="codenav_scroll_indicator_mark"></span>')
         .appendTo($scrollindicator)
@@ -241,7 +241,12 @@ function setup_search() {
         // True line number is inexplicably offset by 2 sometimes?
         var offset = 0;
         var lineno = num + my_line_index + offset;
-        window.location.href = 'https://github.com' + linehref + '#L' + lineno;
+        if (window.location.href.indexOf(linehref) > -1) {
+          // Same page. To fix a firefox problem, just scroll to it directly.
+          $('.blob-wrapper').scrollTop(cfg.line_height * lineno);
+        } else {
+          window.location.href = 'https://github.com' + linehref + '#L' + lineno;
+        }
         $div.remove();
       });
     });
