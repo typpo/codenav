@@ -1,3 +1,8 @@
+chrome/src/inject/inject*
+chrome/src/lib/jquery*
+firefox/data/inject*
+firefox/data/jquery*
+
 ### vim ###
 [._]*.s[a-w][a-z]
 [._]s[a-w][a-z]

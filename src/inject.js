@@ -2,22 +2,19 @@ var $ = window.jQuery;
 var cfg = {};
 var fns = {};
 
-chrome.extension.sendMessage({}, function(response) {
-  var readyStateCheckInterval = setInterval(function() {
-    if (document.readyState === "complete") {
-      clearInterval(readyStateCheckInterval);
-      run();
+console.log('aayyyyy');
+$(function() {
+  console.log('asdasdasd');
+  run();
 
-      // Silly detection for pushstate
-      var lastloc = window.location.href;
-      setInterval(function() {
-        if (lastloc != window.location.href) {
-          setTimeout(run, 300);
-          lastloc = window.location.href;
-        }
-      }, 100);
+  // Silly detection for pushstate
+  var lastloc = window.location.href;
+  setInterval(function() {
+    if (lastloc != window.location.href) {
+      setTimeout(run, 300);
+      lastloc = window.location.href;
     }
-  }, 10);
+  }, 100);
 });
 
 function run() {

@@ -1,9 +1,9 @@
 {
-  "name": "firefox",
-  "title": "firefox",
+  "name": "codenav",
+  "title": "CodeNav",
   "id": "jid1-sDYWrhm3vTaDVw",
-  "description": "a basic add-on",
-  "author": "",
-  "license": "MPL 2.0",
+  "description": "easier github browsing",
+  "author": "Ian Webster",
+  "license": "MIT",
   "version": "0.1"
 }
