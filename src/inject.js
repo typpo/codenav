@@ -5,7 +5,7 @@ var fns = {};
 $(function() {
   run();
 
-  // Silly detection for pushstate
+  // Silly detection for pushstate changes
   var lastloc = window.location.href;
   setInterval(function() {
     if (lastloc != window.location.href) {
@@ -90,7 +90,7 @@ function setup_code_highlighting() {
         return;
       }
 
-      // Unhighlighting existing
+      // Unhighlight existing
       $('.code-body .codenav_highlight').removeClass('codenav_highlight');
 
       // Then highlight
@@ -243,13 +243,10 @@ function setup_search() {
         var num = parseInt($firstline.text());
         var linehref = href.slice(0, href.indexOf('#'));
 
-        // TODO 0 for now. It's inconsistent :(
-        // FIXME True line number is inexplicably offset by 1 or 2 sometimes?
         var offset = 0;
         var lineno = num + my_line_index + offset;
         if (window.location.href.indexOf(linehref) > -1) {
           // Same page. Just scroll to it directly.
-          //$('.blob-wrapper').scrollTop(cfg.line_height * lineno);
           scroll_to_lineno(lineno);
         } else {
           window.location.href = 'https://github.com' + linehref + '#L' + lineno;
