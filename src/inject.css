@@ -10,7 +10,7 @@
 }
 
 .codenav_highlight_sticky {
-  background-color: #88ffb8;
+  background-color: #88ffb8 !important;
 }
 
 .codenav_ignore {
