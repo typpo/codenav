@@ -1,6 +1,7 @@
 #!/bin/bash
 # Set up hardlinks.  Run this script so you only need to edit src/* and changes
-# will apply for both Firefox and Chrome.
+# will apply for both Firefox and Chrome.  Unfortunately browsers won't pick up
+# symlinks in plugins.
 
 pushd `dirname $0`
 ln src/inject* firefox/data
