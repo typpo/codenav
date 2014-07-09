@@ -207,7 +207,7 @@ function setup_search() {
         $search_content.empty().append('<h1>Nothing found</h1>');
         return;
       }
-      $results.find('.search-foot-note').html('(Note that Github provides one search result per file)');
+      $results.find('.search-foot-note').html('<div><br>(Note that Github provides one search result per file)</div>');
 
       $search_content.empty().append($results);
 
