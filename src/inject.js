@@ -61,7 +61,7 @@ function setup_code_highlighting() {
   });
 
   // omit comments and such
-  $('.code-body .c').addClass('codenav_ignore');
+  $('.code-body .c,.c1').addClass('codenav_ignore');
 
   // Click behavior
   $('.code-body span').on('click', function() {
