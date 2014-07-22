@@ -6,11 +6,11 @@ $(function() {
   run();
 
   // Silly detection for pushstate changes
-  var lastloc = window.location.href;
+  var lastloc = window.location.pathname;
   setInterval(function() {
-    if (lastloc != window.location.href) {
+    if (lastloc != window.location.pathname) {
       setTimeout(run, 300);
-      lastloc = window.location.href;
+      lastloc = window.location.pathname;
     }
   }, 100);
 });
@@ -134,6 +134,20 @@ function setup_scroll_wrapper() {
   // TODO fix this when user uses f5 to refresh
   $bwrapper.scrollTop(cfg.original_scroll_pos - $bwrapper.offset().top);
   $(window).scrollTop(0);
+
+  // Handle when user clicks line numbers
+  //var scroll_before_hash_change = 0;
+  window.onhashchange = function(e) {
+    if (window.location.hash.indexOf('#L') === 0) {
+      // TODO record scroll location on click and return exactly there.
+      scroll_to_lineno(window.location.hash.slice(2));
+    }
+  }
+  /*
+  $('.blob-line-nums').on('click', function() {
+    scroll_before_hash_change = $bwrapper.scrollTop();
+  });
+  */
 }
 
 function setup_scroll_bar() {
