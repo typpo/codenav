@@ -53,7 +53,7 @@ function setup_code_highlighting() {
       // omit strings of symbols
       return;
     }
-    if (!token_index[tok]) {
+    if (!(token_index[tok] instanceof Array)) {
       token_index[tok] = [];
     }
     var token_list = token_index[tok];
