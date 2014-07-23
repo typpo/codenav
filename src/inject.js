@@ -119,7 +119,7 @@ function scroll_to_lineno(n) {
   var $lineelt = $('#LC' + n);
   var $lineparent = $lineelt.parent();
   var linepos = $lineelt.offset().top - $lineparent.offset().top - $lineparent.scrollTop();
-  $bwrapper.scrollTop(linepos - 100);
+  $bwrapper.scrollTop(linepos);
 }
 
 function setup_scroll_wrapper() {
