@@ -28,6 +28,7 @@
   height: 300px;   /* see preferred_search_box_height in js */
 
   overflow-y: scroll;
+  z-index: 999999;
 }
 
 .codenav_search_results_highlight {
