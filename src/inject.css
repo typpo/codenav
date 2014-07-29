@@ -99,5 +99,5 @@
   position: fixed;
   bottom: 300px;  /* see preferred_search_box_height in js */
 
-  z-index: 999;
+  z-index: 999999;
 }
