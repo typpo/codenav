@@ -7,7 +7,6 @@ pushd `dirname $0`
 
 rm firefox/data/*.{js,css}
 rm chrome/src/inject/*.{js,css}
-rm src/lib/*.{js,css}
 
 ln src/inject* firefox/data
 ln src/inject* chrome/src/inject
