@@ -1,7 +1,3 @@
-.codenav_hide_scroll {
-  overflow: hidden;
-}
-
 .codenav_word_split span {
   cursor: pointer;
 }
@@ -53,7 +49,7 @@
 }
 
 .codenav_blob_wrapper {
-  overflow-y: scroll !important;
+  /*overflow-y: scroll  !important;*/
 }
 
 .codenav_scroll_indicator {

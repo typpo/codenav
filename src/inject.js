@@ -16,10 +16,6 @@ $(function() {
 });
 
 function run() {
-  if (!is_code_page()) {
-    $('body').removeClass('codenav_hide_scroll');
-    return;
-  }
   setup_config();
   setup_code_highlighting();
   setup_scroll_wrapper();
@@ -124,10 +120,9 @@ function scroll_to_lineno(n) {
 
 function setup_scroll_wrapper() {
   var $bwrapper = $('.blob-wrapper');
-  $bwrapper.addClass('codenav_blob_wrapper').height(
-      $(window).height() - $bwrapper.offset().top)
-
-  $('body').addClass('codenav_hide_scroll');
+  $bwrapper.addClass('codenav_blob_wrapper')
+  // .height(
+      // $(window).height() - $bwrapper.offset().top)
 
   // Handle when github scrolls for the user initially, eg.
   // https://github.com/typpo/asterank/blob/ab4655402ca61fccc339caab1a6c0ba7d14abf66/static/js/main/controllers/asteroid_table.js#L90
@@ -162,7 +157,7 @@ function setup_scroll_bar() {
   fns.codenav_mark_line = function(n, $elt) {
     // Reset height to handle resize
     var $bwrapper = $('.blob-wrapper');
-    $scrollindicator.height($bwrapper.height());
+    // $scrollindicator.height($bwrapper.height());
     $('.code-body').css('min-height', $bwrapper.height());
 
     // Compute marker position
@@ -179,7 +174,7 @@ function setup_scroll_bar() {
         .appendTo($scrollindicator)
         .css('top', height)
         // Fix positioning if code is horizontally scrollable
-        .css('margin-left', -1*Math.max(0, $fcode.width() - 920 + 15))
+        // .css('margin-left', -1*Math.max(0, $fcode.width() - 920 + 15))
         .on('click', function() {
           // Note this doesn't handle resize between setup and click.
           scroll_to_lineno(n);
