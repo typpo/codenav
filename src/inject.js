@@ -113,9 +113,9 @@ function setup_code_highlighting() {
 function scroll_to_lineno(n) {
   var $bwrapper = $('.blob-wrapper');
   var $lineelt = $('#LC' + n);
-  var $lineparent = $lineelt.parent();
-  var linepos = $lineelt.offset().top - $lineparent.offset().top - $lineparent.scrollTop();
-  $bwrapper.scrollTop(linepos);
+  var linepos = $lineelt.offset().top;
+  var margin = Math.round($lineelt.height() / 3);
+  $('html, body').animate({ scrollTop: (linepos - margin)});
 }
 
 function setup_scroll_wrapper() {
