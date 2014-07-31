@@ -33,7 +33,7 @@ function setup_config() {
   cfg.original_scroll_pos = $(window).scrollTop();
 
   var font_size = $('.code-body').css('font-size');
-  cfg.line_height = Math.floor(parseInt(font_size.replace('px','')) * 1.5);
+  cfg.line_height = font_size ? Math.floor(parseInt(font_size.replace('px','')) * 1.5) : 19;
 }
 
 function setup_code_highlighting() {
@@ -119,6 +119,8 @@ function scroll_to_lineno(n) {
 }
 
 function setup_scroll_wrapper() {
+  if(!is_code_page()) { return; }
+
   var $bwrapper = $('.blob-wrapper');
   $bwrapper.addClass('codenav_blob_wrapper')
   // .height(
