@@ -2,7 +2,7 @@
   cursor: pointer;
 }
 .codenav_highlight {
-  background-color: #ffa;
+  background-color: rgb(255, 255, 170);
 }
 
 .codenav_highlight_sticky {
@@ -49,22 +49,27 @@
 }
 
 .codenav_scroll_indicator {
-  width: 1%;
+  width: 10px;
 
   vertical-align: top;
   text-align: right;
 
   line-height: 1;
   float: right;
+  margin-top: 3px;
+  margin-bottom: 3px;
+
+  top: 45px;
+  margin-left: -12px;
+  position: absolute;
 }
 
 .codenav_scroll_indicator_mark {
   position: absolute;
 
-  background-color: #ffa;
-  border: 1px solid #909090;
-  width: 1%;
-  height: 11px;
+  background-color: rgba(240, 0, 0, 1.0);
+  width: 10px;
+  height: 2px;
 
   float: right;
 

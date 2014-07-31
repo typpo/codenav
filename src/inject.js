@@ -21,6 +21,7 @@ function run() {
   setup_scroll_wrapper();
   setup_scroll_bar();
   setup_search();
+  setup_scroll_bar_positioning();
 }
 
 function is_code_page() {
@@ -122,9 +123,7 @@ function setup_scroll_wrapper() {
   if(!is_code_page()) { return; }
 
   var $bwrapper = $('.blob-wrapper');
-  $bwrapper.addClass('codenav_blob_wrapper')
-  // .height(
-      // $(window).height() - $bwrapper.offset().top)
+  $bwrapper.addClass('codenav_blob_wrapper');
 
   // Handle when github scrolls for the user initially, eg.
   // https://github.com/typpo/asterank/blob/ab4655402ca61fccc339caab1a6c0ba7d14abf66/static/js/main/controllers/asteroid_table.js#L90
@@ -140,43 +139,91 @@ function setup_scroll_wrapper() {
       scroll_to_lineno(window.location.hash.slice(2));
     }
   }
-  /*
-  $('.blob-line-nums').on('click', function() {
-    scroll_before_hash_change = $bwrapper.scrollTop();
+}
+
+// As we scroll past the top of the file code container, attach the line marker container to be
+// fixed in the viewport (& reset it to be contained in the file container if we scroll back up.)
+function setup_scroll_bar_positioning() {
+  // This function is called on pjax page loads (where the window object persists but the page
+  // content changes), so first unregister any old window event handlers before adding new ones
+  $(window)
+    .off('scroll.codenav')
+    .off('resize.codenav');
+
+  if(!is_code_page()) {
+    return;
+  }
+
+  var $bwrapper = $('.blob-wrapper');
+  var $scrollindicator = $('.codenav_scroll_indicator');
+
+  // Cache the current 'position' attribute of $scrollindicator to save a CSS lookup/set each scroll
+  var lastPosition = null;
+
+  // On page scroll, check if the $scrollindicator container holding our line markings should be
+  // attached to its parent like a normal element, or fixed in the viewport as we scroll down
+  $(window).on('scroll.codenav', function() {
+    if(($bwrapper.offset().top - $(document).scrollTop()) <= 0) {
+      // If we've scrolled past the top of the code blob container, fix $scrollindicator to viewport
+      if(lastPosition != "fixed") { // Only update CSS attributes if not already set correctly
+        $scrollindicator
+          .css("position", "fixed")
+          // We don't need to add padding for the file header bar because it's scrolled offscreen
+          // at this point
+          .css("top", "0px");
+
+        lastPosition = "fixed";
+      }
+    } else {
+      // If we're above the top of the code blob container, attach $scrollindicator to it
+      if(lastPosition != "absolute") {
+        $scrollindicator
+          .css("position", "absolute")
+          // We add 45px of padding above it to account for the file header info/actions bar
+          .css("top", "45px");
+
+        lastPosition = "absolute";
+      }
+    }
+  })
+
+  // We resize the $scrollindicator container to be the
+  $(window).on('resize.codenav', function() {
+    $scrollindicator.height($(window).innerHeight());
   });
-  */
 }
 
 function setup_scroll_bar() {
   // Manual width is to fix firefox problem.
-  var $td = $('<td style="width:1%"></td>').appendTo($('tr.file-code-line'));
+  var $td = $('<td id="codenav_scroll_cell" style="width:1%"></td>').appendTo($('tr.file-code-line'));
   var $scrollindicator = $('<div class="codenav_scroll_indicator"></div>').appendTo($td);
   var $fcode = $('.file-code');
+  var $bwrapper = $('.blob-wrapper');
 
   var total_num_lines = $('.line').length; // total lines in file
+
+  var didSetBorder = false;
 
   // Define marking functions.
   fns.codenav_mark_line = function(n, $elt) {
     // Reset height to handle resize
-    var $bwrapper = $('.blob-wrapper');
-    // $scrollindicator.height($bwrapper.height());
+    // var $bwrapper = $('.blob-wrapper');
+    $scrollindicator.height($(window).innerHeight());
     $('.code-body').css('min-height', $bwrapper.height());
 
-    // Compute marker position
-    var height;
-    if (total_num_lines * cfg.line_height > $scrollindicator.height()) {
-      // Visualize placement across the entire document.
-      var pct = n/total_num_lines;
-      height = $scrollindicator.height() * pct + 40;
-    } else {
-      // More accurate placement.
-      height = cfg.line_height * n;
+    if(!didSetBorder) {
+      $bwrapper.css("border-right", "14px solid rgba(0, 0, 0, 0.04)");
+      didSetBorder = true;
     }
+
+    // Compute marker position
+    var height = Math.round((n/total_num_lines) * 100);
+
     var $mark = $('<span class="codenav_scroll_indicator_mark"></span>')
         .appendTo($scrollindicator)
-        .css('top', height)
+        .css('top', '' + height + '%')
         // Fix positioning if code is horizontally scrollable
-        // .css('margin-left', -1*Math.max(0, $fcode.width() - 920 + 15))
+        .css('margin-left', -1*Math.max(0, $fcode.width() - 920 + 11))
         .on('click', function() {
           // Note this doesn't handle resize between setup and click.
           scroll_to_lineno(n);
