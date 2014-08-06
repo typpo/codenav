@@ -223,9 +223,8 @@ function setup_scroll_bar() {
   // Define marking functions.
   fns.codenav_mark_line = function(n, $elt) {
     // Reset height to handle resize
-    // var $bwrapper = $('.blob-wrapper');
-    $scrollindicator.height($(window).innerHeight());
-    $('.code-body').css('min-height', $bwrapper.height());
+    var $bwrapper = $('.blob-wrapper');
+    $scrollindicator.height(Math.min($(window).innerHeight(), $bwrapper.height()));
 
     if(!did_set_border) {
       $bwrapper.css("border-right", "14px solid rgba(0, 0, 0, 0.04)");
@@ -234,7 +233,6 @@ function setup_scroll_bar() {
 
     // Compute marker position
     var height = Math.round((n/total_num_lines) * 100);
-
     var $mark = $('<span class="codenav_scroll_indicator_mark"></span>')
         .appendTo($scrollindicator)
         .css('top', '' + height + '%')
