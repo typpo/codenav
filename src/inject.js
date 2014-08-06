@@ -218,7 +218,7 @@ function setup_scroll_bar() {
 
   var total_num_lines = $('.line').length; // total lines in file
 
-  var didSetBorder = false;
+  var did_set_border = false;
 
   // Define marking functions.
   fns.codenav_mark_line = function(n, $elt) {
@@ -227,9 +227,9 @@ function setup_scroll_bar() {
     $scrollindicator.height($(window).innerHeight());
     $('.code-body').css('min-height', $bwrapper.height());
 
-    if(!didSetBorder) {
+    if(!did_set_border) {
       $bwrapper.css("border-right", "14px solid rgba(0, 0, 0, 0.04)");
-      didSetBorder = true;
+      did_set_border = true;
     }
 
     // Compute marker position
