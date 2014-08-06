@@ -159,31 +159,31 @@ function setup_scroll_bar_positioning() {
   var $scrollindicator = $('.codenav_scroll_indicator');
 
   // Cache the current 'position' attribute of $scrollindicator to save a CSS lookup/set each scroll
-  var lastPosition = null;
+  var last_position = null;
 
   // On page scroll, check if the $scrollindicator container holding our line markings should be
   // attached to its parent like a normal element, or fixed in the viewport as we scroll down
   $(window).on('scroll.codenav', function() {
     if(($bwrapper.offset().top - $(document).scrollTop()) <= 0) {
       // If we've scrolled past the top of the code blob container, fix $scrollindicator to viewport
-      if(lastPosition != "fixed") { // Only update CSS attributes if not already set correctly
+      if(last_position != 'fixed') { // Only update CSS attributes if not already set correctly
         $scrollindicator
-          .css("position", "fixed")
+          .css('position', 'fixed')
           // We don't need to add padding for the file header bar because it's scrolled offscreen
           // at this point
-          .css("top", "0px");
+          .css('top', '0px');
 
-        lastPosition = "fixed";
+        last_position = 'fixed';
       }
     } else {
       // If we're above the top of the code blob container, attach $scrollindicator to it
-      if(lastPosition != "absolute") {
+      if(last_position != 'absolute') {
         $scrollindicator
-          .css("position", "absolute")
+          .css('position', 'absolute')
           // We add 45px of padding above it to account for the file header info/actions bar
-          .css("top", "45px");
+          .css('top', '45px');
 
-        lastPosition = "absolute";
+        last_position = 'absolute';
       }
     }
   })
@@ -193,7 +193,7 @@ function setup_scroll_bar_positioning() {
     $scrollindicator.height($(window).innerHeight());
   });
 
-  $(window).on('scroll', function() {
+  var debounced_scroll_handler = debounce(function() {
     var amount_scrolled_below_top_of_bwrapper  = $(window).scrollTop() - $bwrapper.offset().top;
     var amount_scrolled_below_bottom_of_bwrapper = amount_scrolled_below_top_of_bwrapper +
       $(window).height() - $bwrapper.height();
@@ -203,6 +203,9 @@ function setup_scroll_bar_positioning() {
     } else {
       $scrollindicator.height($(window).innerHeight());
     }
+  }, 50);
+  $(window).on('scroll', function() {
+    debounced_scroll_handler();
   });
 }
 
@@ -363,6 +366,23 @@ function setup_search_dragbar() {
     }
   });
 }
+
+var debounce = function (func, threshold, execAsap) {
+  var timeout;
+  return function debounced () {
+    var obj = this, args = arguments;
+    function delayed () {
+      if (!execAsap)
+        func.apply(obj, args);
+      timeout = null;
+    }
+    if (timeout)
+      clearTimeout(timeout);
+    else if (execAsap)
+      func.apply(obj, args);
+    timeout = setTimeout(delayed, threshold || interval);
+  };
+};
 
 var SEARCH_DIV =
 '<div id="codenav_search_drag"></div>' +
