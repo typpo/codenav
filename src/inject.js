@@ -155,6 +155,7 @@ function setup_scroll_bar_positioning() {
   }
 
   var $bwrapper = $('.blob-wrapper');
+  var $fcode = $('.file-code');
   var $scrollindicator = $('.codenav_scroll_indicator');
 
   // Cache the current 'position' attribute of $scrollindicator to save a CSS lookup/set each scroll
@@ -187,9 +188,21 @@ function setup_scroll_bar_positioning() {
     }
   })
 
-  // We resize the $scrollindicator container to be the
+  // We resize the $scrollindicator container to be the visible height of the blob wrapper
   $(window).on('resize.codenav', function() {
     $scrollindicator.height($(window).innerHeight());
+  });
+
+  $(window).on('scroll', function() {
+    var amount_scrolled_below_top_of_bwrapper  = $(window).scrollTop() - $bwrapper.offset().top;
+    var amount_scrolled_below_bottom_of_bwrapper = amount_scrolled_below_top_of_bwrapper +
+      $(window).height() - $bwrapper.height();
+
+    if (amount_scrolled_below_bottom_of_bwrapper > 0) {
+      $scrollindicator.height($(window).innerHeight() - amount_scrolled_below_bottom_of_bwrapper);
+    } else {
+      $scrollindicator.height($(window).innerHeight());
+    }
   });
 }
 

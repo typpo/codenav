@@ -62,14 +62,17 @@
   top: 45px;
   margin-left: -12px;
   position: absolute;
+
+  z-index: 999999;
 }
 
 .codenav_scroll_indicator_mark {
   position: absolute;
 
-  background-color: rgba(240, 0, 0, 1.0);
+  background-color: #ffa;
+  border: 1px solid #909090;
   width: 10px;
-  height: 2px;
+  height: 8px;
 
   float: right;
 
