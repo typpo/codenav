@@ -232,10 +232,18 @@ function setup_scroll_bar() {
     }
 
     // Compute marker position
-    var height = Math.round((n/total_num_lines) * 100);
+    var height;
+    if ($('body').height() > $(window).height()) {
+      // Has scroll bar.
+      height = Math.round((n/total_num_lines) * 100) + '%';
+    } else {
+      // Handle the special case where the document fits within the entire window.
+      height = (cfg.line_height * n - 20) + 'px';
+    }
+
     var $mark = $('<span class="codenav_scroll_indicator_mark"></span>')
         .appendTo($scrollindicator)
-        .css('top', '' + height + '%')
+        .css('top', height)
         // Fix positioning if code is horizontally scrollable
         .css('margin-left', -1*Math.max(0, $fcode.width() - 920 + 11))
         .on('click', function() {
