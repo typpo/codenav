@@ -148,7 +148,7 @@ function setup_scroll_bar_positioning() {
 
     if(amount_scrolled_below_top_of_bwrapper > 0) {
       // If we've scrolled past the top of the code blob container, fix $scrollindicator to viewport
-      if(last_position != 'fixed') { // Only update CSS attributes if not already set correctly
+      if (last_position !== 'fixed') { // Only update CSS attributes if not already set correctly
         $scrollindicator
           .css('position', 'fixed')
           // We don't need to add padding for the file header bar because it's scrolled offscreen
@@ -160,7 +160,7 @@ function setup_scroll_bar_positioning() {
       }
     } else {
       // If we're above the top of the code blob container, attach $scrollindicator to it
-      if(last_position != 'absolute') {
+      if (last_position !== 'absolute') {
         $scrollindicator
           .css('position', 'absolute')
           // We add 45px of padding above it to account for the file header info/actions bar
@@ -186,9 +186,8 @@ function setup_scroll_bar_positioning() {
 
 function setup_scroll_bar() {
   // Manual width is to fix firefox problem.
-  //var $td = $('<td id="codenav_scroll_cell" style="width:1%"></td>').appendTo($('tr.file-code-line'));
-  //var $scrollindicator = $('<div class="codenav_scroll_indicator"></div>').appendTo($td);
-  var $scrollindicator = $('<div class="codenav_scroll_indicator"></div>').appendTo($('.js-file-line-container').parent());
+  var $scrollindicator = $('<div class="codenav_scroll_indicator"></div>')
+    .appendTo($('.js-file-line-container').parent());
   var $bwrapper = $('.blob-wrapper');
 
   var total_num_lines = $('.js-line-number').length; // total lines in file
