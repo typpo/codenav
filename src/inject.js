@@ -21,6 +21,10 @@ function run() {
   setup_scroll_bar();
   setup_search();
   setup_scroll_bar_positioning();
+
+  setTimeout(function() {
+    $(window).trigger('scroll.codenav');
+  }, 100);
 }
 
 function is_code_page() {
