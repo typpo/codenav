@@ -185,6 +185,7 @@ function setup_scroll_bar_positioning() {
   // We resize the $scrollindicator container to be the visible height of the blob wrapper
   $(window).on('resize.codenav', function() {
     $scrollindicator.height($(window).innerHeight());
+    $(window).trigger('scroll.codenav');
   });
 }
 
