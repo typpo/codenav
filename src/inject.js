@@ -273,38 +273,25 @@ function setup_search() {
       }
       $summ.html('<h3>Showing ' + numresults + ' results</h3><hr/>');
 
-      $search_content.find('.code-list-item .line').hover(function() {
+      $search_content.find('.blob-line-code').hover(function() {
         $(this).addClass('codenav_search_results_highlight');
       }, function() {
         $('.codenav_search_results_highlight').removeClass('codenav_search_results_highlight');
       });
 
-      $search_content.find('.code-list-item .line').on('click', function() {
+      $search_content.find('.blob-line-code').on('click', function() {
         // This element is the Nth .line
-        var lines = $(this).closest('.blob-line-code').find('.line');
-        var my_line_index = 0;
-        for (; my_line_index < lines.length; my_line_index++) {
-          if (lines[my_line_index] == this) {
-            break;
-          }
-        }
-
-        // Guess line num - github doesn't really know here
-        // Check out this example where Github just labels stuff wrong
-        // https://github.com/typpo/asterank/blob/ab4655402ca61fccc339caab1a6c0ba7d14abf66/static/js/main/controllers/custom_input.js#L33
-        var $firstline = $($(this).closest('.blob-line-code').find('.blob-line-nums a')[0]);
-        var href = $firstline.attr('href');
-        var num = parseInt($firstline.text());
-        var linehref = href.slice(0, href.indexOf('#'));
-
-        var offset = 0;
-        var lineno = num + my_line_index + offset;
+        var $lineno = $(this).prev();
+        var href = $lineno.find('a').attr('href');
+        var lineno = parseInt($lineno.text());
+        /*
+         * TODO handle case where it's in the same file.
         if (window.location.href.indexOf(linehref) > -1) {
           // Same page. Just scroll to it directly.
           scroll_to_lineno(lineno);
-        } else {
-          window.location.href = 'https://github.com' + linehref + '#L' + lineno;
         }
+        */
+       window.location.href = href;
         $div.remove();
       });
     });
