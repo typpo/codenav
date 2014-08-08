@@ -18,7 +18,6 @@ $(function() {
 function run() {
   setup_config();
   setup_code_highlighting();
-  setup_scroll_wrapper();
   setup_scroll_bar();
   setup_search();
   setup_scroll_bar_positioning();
@@ -33,17 +32,19 @@ function setup_config() {
   cfg.repo_home_link = $('.js-repo-home-link').attr('href');
   cfg.original_scroll_pos = $(window).scrollTop();
 
-  var font_size = $('.code-body').css('font-size');
+  cfg.$code_body = $('.js-file-line-container');
+
+  var font_size = cfg.$code_body.css('font-size');
   cfg.line_height = font_size ? Math.floor(parseInt(font_size.replace('px','')) * 1.5) : 19;
 }
 
 function setup_code_highlighting() {
   var token_index = {};
 
-  $('.code-body').addClass('codenav_word_split');
+  cfg.$code_body.addClass('codenav_word_split');
 
   // Build the index on startup
-  $('.code-body span').each(function() {
+  cfg.$code_body.find('span').each(function() {
     var $this = $(this);
     var tok = $this.html();
     if (/^[ ,\(\)\.\\\/\[\]\{\}\'\"\:\;\+]+$/.test(tok)) {
@@ -58,15 +59,15 @@ function setup_code_highlighting() {
   });
 
   // omit comments and such
-  $('.code-body .c,.c1').addClass('codenav_ignore');
+  cfg.$code_body.find('.c,.c1').addClass('codenav_ignore');
 
   // Click behavior
-  $('.code-body span').on('click', function() {
+  cfg.$code_body.find('span').on('click', function() {
     var $this = $(this);
     if ($this.hasClass('codenav_ignore')) {
       return;
     }
-    $('.code-body .codenav_highlight_sticky').removeClass('codenav_highlight_sticky');
+    cfg.$code_body.find('.codenav_highlight_sticky').removeClass('codenav_highlight_sticky');
     var tokens = token_index[$this.html()];
     if (!tokens) {
       // This token wasn't indexed.
@@ -80,7 +81,7 @@ function setup_code_highlighting() {
   // Hover behavior
   // User must hover for 150 ms to trigger 'hover' event.
   var hover_timer = null;
-  $('.code-body span').hover(function() {
+  cfg.$code_body.find('span').hover(function() {
     var $this = $(this);
     hover_timer = setTimeout(function() {
       if ($this.hasClass('codenav_ignore')) {
@@ -88,7 +89,7 @@ function setup_code_highlighting() {
       }
 
       // Unhighlight existing
-      $('.code-body .codenav_highlight').removeClass('codenav_highlight');
+      cfg.$code_body.find('.codenav_highlight').removeClass('codenav_highlight');
 
       // Then highlight
       var tokens = token_index[$this.html()];
@@ -100,7 +101,7 @@ function setup_code_highlighting() {
       for (var i=0; i < tokens.length; i++) {
         var tok = tokens[i];
         tok.addClass('codenav_highlight');
-        var lineno = parseInt(tok.closest('.line').attr('id').slice(2));
+        var lineno = parseInt(tok.closest('td').attr('id').slice(2));
         fns.codenav_mark_line(lineno, tok);
       }
     }, 150);
@@ -119,28 +120,6 @@ function scroll_to_lineno(n) {
   $('html, body').animate({ scrollTop: (linepos - margin)});
 }
 
-function setup_scroll_wrapper() {
-  if(!is_code_page()) { return; }
-
-  var $bwrapper = $('.blob-wrapper');
-  $bwrapper.addClass('codenav_blob_wrapper');
-
-  // Handle when github scrolls for the user initially, eg.
-  // https://github.com/typpo/asterank/blob/ab4655402ca61fccc339caab1a6c0ba7d14abf66/static/js/main/controllers/asteroid_table.js#L90
-  // TODO fix this when user uses f5 to refresh
-  $bwrapper.scrollTop(cfg.original_scroll_pos - $bwrapper.offset().top);
-  $(window).scrollTop(0);
-
-  // Handle when user clicks line numbers
-  //var scroll_before_hash_change = 0;
-  window.onhashchange = function(e) {
-    if (window.location.hash.indexOf('#L') === 0) {
-      // TODO record scroll location on click and return exactly there.
-      scroll_to_lineno(window.location.hash.slice(2));
-    }
-  }
-}
-
 // As we scroll past the top of the file code container, attach the line marker container to be
 // fixed in the viewport (& reset it to be contained in the file container if we scroll back up.)
 function setup_scroll_bar_positioning() {
@@ -155,7 +134,6 @@ function setup_scroll_bar_positioning() {
   }
 
   var $bwrapper = $('.blob-wrapper');
-  var $fcode = $('.file-code');
   var $scrollindicator = $('.codenav_scroll_indicator');
 
   // Cache the current 'position' attribute of $scrollindicator to save a CSS lookup/set each scroll
@@ -164,14 +142,19 @@ function setup_scroll_bar_positioning() {
   // On page scroll, check if the $scrollindicator container holding our line markings should be
   // attached to its parent like a normal element, or fixed in the viewport as we scroll down
   $(window).on('scroll.codenav', function() {
-    if(($bwrapper.offset().top - $(document).scrollTop()) <= 0) {
+    var amount_scrolled_below_top_of_bwrapper  = $(window).scrollTop() - $bwrapper.offset().top;
+    var amount_scrolled_below_bottom_of_bwrapper = amount_scrolled_below_top_of_bwrapper +
+      $(window).height() - $bwrapper.height();
+
+    if(amount_scrolled_below_top_of_bwrapper > 0) {
       // If we've scrolled past the top of the code blob container, fix $scrollindicator to viewport
       if(last_position != 'fixed') { // Only update CSS attributes if not already set correctly
         $scrollindicator
           .css('position', 'fixed')
           // We don't need to add padding for the file header bar because it's scrolled offscreen
           // at this point
-          .css('top', '0px');
+          .css('top', '0px')
+          .css('left', Math.round($bwrapper.offset().left + $bwrapper.width() - 7) + 'px');
 
         last_position = 'fixed';
       }
@@ -181,10 +164,17 @@ function setup_scroll_bar_positioning() {
         $scrollindicator
           .css('position', 'absolute')
           // We add 45px of padding above it to account for the file header info/actions bar
-          .css('top', '45px');
+          .css('top', '45px')
+          .css('left', 'auto');
 
         last_position = 'absolute';
       }
+    }
+
+    if (amount_scrolled_below_bottom_of_bwrapper > 0) {
+      $scrollindicator.height($(window).innerHeight() - amount_scrolled_below_bottom_of_bwrapper);
+    } else {
+      $scrollindicator.height($(window).innerHeight());
     }
   })
 
@@ -192,31 +182,16 @@ function setup_scroll_bar_positioning() {
   $(window).on('resize.codenav', function() {
     $scrollindicator.height($(window).innerHeight());
   });
-
-  var debounced_scroll_handler = debounce(function() {
-    var amount_scrolled_below_top_of_bwrapper  = $(window).scrollTop() - $bwrapper.offset().top;
-    var amount_scrolled_below_bottom_of_bwrapper = amount_scrolled_below_top_of_bwrapper +
-      $(window).height() - $bwrapper.height();
-
-    if (amount_scrolled_below_bottom_of_bwrapper > 0) {
-      $scrollindicator.height($(window).innerHeight() - amount_scrolled_below_bottom_of_bwrapper);
-    } else {
-      $scrollindicator.height($(window).innerHeight());
-    }
-  }, 50);
-  $(window).on('scroll', function() {
-    debounced_scroll_handler();
-  });
 }
 
 function setup_scroll_bar() {
   // Manual width is to fix firefox problem.
-  var $td = $('<td id="codenav_scroll_cell" style="width:1%"></td>').appendTo($('tr.file-code-line'));
-  var $scrollindicator = $('<div class="codenav_scroll_indicator"></div>').appendTo($td);
-  var $fcode = $('.file-code');
+  //var $td = $('<td id="codenav_scroll_cell" style="width:1%"></td>').appendTo($('tr.file-code-line'));
+  //var $scrollindicator = $('<div class="codenav_scroll_indicator"></div>').appendTo($td);
+  var $scrollindicator = $('<div class="codenav_scroll_indicator"></div>').appendTo($('.js-file-line-container').parent());
   var $bwrapper = $('.blob-wrapper');
 
-  var total_num_lines = $('.line').length; // total lines in file
+  var total_num_lines = $('.js-line-number').length; // total lines in file
 
   var did_set_border = false;
 
@@ -227,7 +202,7 @@ function setup_scroll_bar() {
     $scrollindicator.height(Math.min($(window).innerHeight(), $bwrapper.height()));
 
     if(!did_set_border) {
-      $bwrapper.css("border-right", "14px solid rgba(0, 0, 0, 0.04)");
+      $bwrapper.css('border-right', '14px solid rgba(0, 0, 0, 0.04)');
       did_set_border = true;
     }
 
@@ -245,7 +220,7 @@ function setup_scroll_bar() {
         .appendTo($scrollindicator)
         .css('top', height)
         // Fix positioning if code is horizontally scrollable
-        .css('margin-left', -1*Math.max(0, $fcode.width() - 920 + 11))
+        //.css('margin-left', -1*Math.max(0, $fcode.width() - 920 + 11))
         .on('click', function() {
           // Note this doesn't handle resize between setup and click.
           scroll_to_lineno(n);
@@ -262,7 +237,7 @@ function setup_scroll_bar() {
 
 var $prevdiv = null;
 function setup_search() {
-  $('.code-body span').on('click', function() {
+  cfg.$code_body.find('span').on('click', function() {
     var $this = $(this);
     if ($this.hasClass('codenav_ignore')) {
       return;
@@ -372,23 +347,6 @@ function setup_search_dragbar() {
     }
   });
 }
-
-var debounce = function (func, threshold, execAsap) {
-  var timeout;
-  return function debounced () {
-    var obj = this, args = arguments;
-    function delayed () {
-      if (!execAsap)
-        func.apply(obj, args);
-      timeout = null;
-    }
-    if (timeout)
-      clearTimeout(timeout);
-    else if (execAsap)
-      func.apply(obj, args);
-    timeout = setTimeout(delayed, threshold || interval);
-  };
-};
 
 var SEARCH_DIV =
 '<div id="codenav_search_drag"></div>' +
