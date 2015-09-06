@@ -33,7 +33,7 @@ function is_code_page() {
 
 function setup_config() {
   // eg. /typpo/asterank
-  cfg.repo_home_link = $('.js-repo-home-link').attr('href');
+  cfg.repo_home_link = window.location.pathname.split('/').slice(0, 3).join('/');
   cfg.original_scroll_pos = $(window).scrollTop();
 
   cfg.$code_body = $('.js-file-line-container');
