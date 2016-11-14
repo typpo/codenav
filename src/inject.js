@@ -247,7 +247,7 @@ function setup_search() {
       return;
     }
     var query = $this.text();
-    var url = 'https://github.com' + cfg.repo_home_link + '/search?q=' + query;
+    var url = 'https://github.com' + cfg.repo_home_link + '/search?utf8=✓&type=Code&q=' + query;
 
     var $div = $(SEARCH_DIV).appendTo('body');
     if ($prevdiv) {
