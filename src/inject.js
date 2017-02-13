@@ -42,15 +42,33 @@ function setup_config() {
   cfg.line_height = font_size ? Math.floor(parseInt(font_size.replace('px','')) * 1.5) : 19;
 }
 
+function wrapTextNodesInSpan($container) {
+  $container.find('*').contents().filter(function() {
+    return this.nodeType == Node.TEXT_NODE;
+  }).wrap('<span/>');
+}
+
+function getTokenFromElt($elt) {
+  var tok = $elt.html();
+  if (!tok && $elt.length > 0) {
+    // elt is a text node.
+    tok = $elt[0].nodeValue;
+  }
+  return tok.trim();
+}
+
 function setup_code_highlighting() {
   var token_index = {};
 
   cfg.$code_body.addClass('codenav_word_split');
 
+  // Necessary because you can't bind events to text nodes.
+  wrapTextNodesInSpan(cfg.$code_body);
+
   // Build the index on startup
-  cfg.$code_body.find('span').each(function() {
+  cfg.$code_body.find('td').contents().each(function() {
     var $this = $(this);
-    var tok = $this.html();
+    var tok = getTokenFromElt($this);
     if (/^[ ,\(\)\.\\\/\[\]\{\}\'\"\:\;\+]+$/.test(tok)) {
       // omit strings of symbols
       return;
@@ -65,14 +83,16 @@ function setup_code_highlighting() {
   // omit comments and such
   cfg.$code_body.find('.c,.c1').addClass('codenav_ignore');
 
+  // TODO(ian): Bind all events efficiently to container, not individual elements.
   // Click behavior
-  cfg.$code_body.find('span').on('click', function() {
+  cfg.$code_body.find('td').contents().on('click', function() {
     var $this = $(this);
     if ($this.hasClass('codenav_ignore')) {
       return;
     }
     cfg.$code_body.find('.codenav_highlight_sticky').removeClass('codenav_highlight_sticky');
-    var tokens = token_index[$this.html()];
+    var tok = getTokenFromElt($this);
+    var tokens = token_index[tok];
     if (!tokens) {
       // This token wasn't indexed.
       return;
@@ -85,7 +105,7 @@ function setup_code_highlighting() {
   // Hover behavior
   // User must hover for 150 ms to trigger 'hover' event.
   var hover_timer = null;
-  cfg.$code_body.find('span').hover(function() {
+  cfg.$code_body.find('td').contents().hover(function() {
     var $this = $(this);
     hover_timer = setTimeout(function() {
       if ($this.hasClass('codenav_ignore')) {
@@ -96,7 +116,8 @@ function setup_code_highlighting() {
       cfg.$code_body.find('.codenav_highlight').removeClass('codenav_highlight');
 
       // Then highlight
-      var tokens = token_index[$this.html()];
+      var tok = getTokenFromElt($this);
+      var tokens = token_index[tok];
       if (!tokens) {
         // We didn't index this token
         return;
