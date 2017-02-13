@@ -46,6 +46,7 @@
   right: 0;
 
   cursor: pointer;
+  z-index: 9;
 }
 
 .codenav_scroll_indicator {
