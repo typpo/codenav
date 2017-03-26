@@ -54,7 +54,7 @@ function getTokenFromElt($elt) {
     // elt is a text node.
     tok = $elt[0].nodeValue;
   }
-  return tok.trim();
+  return tok.trim().replace('\t', '');
 }
 
 function setup_code_highlighting() {
