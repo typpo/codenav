@@ -42,19 +42,24 @@ function setup_config() {
   cfg.line_height = font_size ? Math.floor(parseInt(font_size.replace('px','')) * 1.5) : 19;
 }
 
-function wrapTextNodesInSpan($container) {
+function wrap_text_nodes_in_span($container) {
   $container.find('*').contents().filter(function() {
     return this.nodeType == Node.TEXT_NODE;
   }).wrap('<span/>');
 }
 
-function getTokenFromElt($elt) {
-  var tok = $elt.html();
+function get_token_from_elt($elt) {
+  var tok = $elt.text();
   if (!tok && $elt.length > 0) {
     // elt is a text node.
     tok = $elt[0].nodeValue;
   }
-  return tok.trim().replace('\t', '');
+  var token_regexp = /[a-zA-Z_\-\$]+/g;
+  var matches = token_regexp.exec(tok);
+  if (matches && matches.length > 0) {
+    return matches[0];
+  }
+  return null;
 }
 
 function setup_code_highlighting() {
@@ -63,16 +68,16 @@ function setup_code_highlighting() {
   cfg.$code_body.addClass('codenav_word_split');
 
   // Necessary because you can't bind events to text nodes.
-  wrapTextNodesInSpan(cfg.$code_body);
+  wrap_text_nodes_in_span(cfg.$code_body);
 
   // Build the index on startup
   cfg.$code_body.find('td').contents().each(function() {
     var $this = $(this);
-    var tok = getTokenFromElt($this);
-    if (/^[ ,\(\)\.\\\/\[\]\{\}\'\"\:\;\+]+$/.test(tok)) {
-      // omit strings of symbols
+    var tok = get_token_from_elt($this);
+    if (!tok || /^[ ,\(\)\.\\\/\[\]\{\}\'\"\:\;\+]*$/.test(tok)) {
       return;
     }
+
     if (!(token_index[tok] instanceof Array)) {
       token_index[tok] = [];
     }
@@ -91,8 +96,8 @@ function setup_code_highlighting() {
       return;
     }
     cfg.$code_body.find('.codenav_highlight_sticky').removeClass('codenav_highlight_sticky');
-    var tok = getTokenFromElt($this);
-    var tokens = token_index[tok];
+    var tok_from_elt = get_token_from_elt($this);
+    var tokens = token_index[tok_from_elt];
     if (!tokens) {
       // This token wasn't indexed.
       return;
@@ -103,37 +108,30 @@ function setup_code_highlighting() {
   });
 
   // Hover behavior
-  // User must hover for 150 ms to trigger 'hover' event.
-  var hover_timer = null;
   cfg.$code_body.find('td').contents().hover(function() {
     var $this = $(this);
-    hover_timer = setTimeout(function() {
-      if ($this.hasClass('codenav_ignore')) {
-        return;
-      }
-
-      // Unhighlight existing
-      cfg.$code_body.find('.codenav_highlight').removeClass('codenav_highlight');
-
-      // Then highlight
-      var tok = getTokenFromElt($this);
-      var tokens = token_index[tok];
-      if (!tokens) {
-        // We didn't index this token
-        return;
-      }
-      fns.codenav_clear_marks();
-      for (var i=0; i < tokens.length; i++) {
-        var tok = tokens[i];
-        tok.addClass('codenav_highlight');
-        var lineno = parseInt(tok.closest('td').attr('id').slice(2));
-        fns.codenav_mark_line(lineno, tok);
-      }
-    }, 150);
-  }, function() {
-    if (hover_timer) {
-      clearTimeout(hover_timer);
+    if ($this.hasClass('codenav_ignore')) {
+      return;
     }
+
+    // Unhighlight existing
+    cfg.$code_body.find('.codenav_highlight').removeClass('codenav_highlight');
+
+    // Then highlight
+    var tok = get_token_from_elt($this);
+    var tokens = token_index[tok];
+    if (!tokens) {
+      // We didn't index this token
+      return;
+    }
+    fns.codenav_clear_marks();
+    for (var i=0; i < tokens.length; i++) {
+      var $tok = tokens[i];
+      $tok.addClass('codenav_highlight');
+      var lineno = parseInt($tok.closest('td').attr('id').slice(2), 10);
+      fns.codenav_mark_line(lineno, $tok);
+    }
+  }, function() {
   });
 }
 
