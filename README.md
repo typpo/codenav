@@ -6,9 +6,11 @@ CodeNav is a Chrome extension and Firefox addon that makes navigating code on Gi
 
 Get the latest download links on the [CodeNav site](http://ianww.com/codenav).
 
-## Running from source
+## Building from source
 
-Run `./setup_hardlinks` before you load the Chrome or Firefox plugins.  This will connect the generic code in `src/` to the proper locations in the browser-specific subdirectories.  To make changes to injected code, you only need to edit files in `src/` directly.
+```sh
+./package-exts
+```
 
 ## License (MIT)
 
