@@ -18,7 +18,7 @@ build() {
     cd "$browser"
 
     case "$browser" in
-      chrome|webext)
+      chrome)
       	web-ext build -s . -a .. -o
 	;;
       firefox)
@@ -33,7 +33,7 @@ build() {
   )
 }
 
-[ $# -gt 0 ] || set -- webext firefox
+[ $# -gt 0 ] || set -- chrome firefox
 
 for browser in "$@"; do
   printf '# %s:\n' "$browser"
