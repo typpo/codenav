@@ -12,8 +12,7 @@ build() {
     set -x
     cd "$build"
 
-    rm -rf "$browser"
-    rsync -ahS -L "../$browser" ./
+    rsync -ahS -L --delete-after "../$browser/" "$browser"
 
     cd "$browser"
 
