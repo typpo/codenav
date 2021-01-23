@@ -1,0 +1,45 @@
+#!/bin/bash
+set -eo pipefail
+shopt -s nullglob
+
+root="${0%/*}"
+build="$root/build"
+
+build() {
+  local browser="${1:?}"
+
+  (
+    set -x
+    cd "$build"
+
+    rsync -ahS -L --delete-after "../$browser/" "$browser"
+
+    cd "$browser"
+
+    case "$browser" in
+      chrome)
+      	web-ext build -s . -a .. -o
+	;;
+      firefox)
+      	jpm xpi --addon-dir .
+      	mv -vf -- *.xpi ..
+      	;;
+      *)
+      	printf 'Unknown browser: %s\n' "$browser" >&2
+      	;;
+    esac
+
+  )
+}
+
+[ $# -gt 0 ] || set -- chrome firefox
+
+for browser in "$@"; do
+  printf '# %s:\n' "$browser"
+  build "$browser"
+  echo
+done
+
+echo '# build/* :'
+ls -ltrh $(find "$build" -maxdepth 1 -type f -not -name '.*')
+
